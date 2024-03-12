@@ -1,187 +1,101 @@
-# REST version of Spring PetClinic Sample Application (spring-framework-petclinic extend ) 
+# React Frontend for Spring Boot PetClinic demo
+[![Build Status](https://travis-ci.org/spring-petclinic/spring-petclinic-reactjs.svg?branch=master)](https://travis-ci.org/spring-petclinic/spring-petclinic-reactjs)
 
-[![Java Build Status](https://github.com/spring-petclinic/spring-petclinic-rest/actions/workflows/maven-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-rest/actions/workflows/maven-build.yml)
-[![Docker Build Status](https://github.com/spring-petclinic/spring-petclinic-rest/actions/workflows/docker-build.yml/badge.svg)](https://github.com/spring-petclinic/spring-petclinic-rest/actions/workflows/docker-build.yml)
+This project is a port of the [Spring (Boot) PetClinic demo](https://github.com/spring-projects/spring-petclinic) with a frontend built using [ReactJS](https://facebook.github.io/react/) and
+[TypeScript](https://www.typescriptlang.org/). 
 
-This backend version of the Spring Petclinic application only provides a REST API. **There is no UI**.
-The [spring-petclinic-angular project](https://github.com/spring-petclinic/spring-petclinic-angular) is a Angular front-end application which consumes the REST API.
+I have tried to make as few modifications to the backend code as necessary to the [spring-boot branch](https://github.com/spring-projects/spring-petclinic/tree/springboot) of the original sample project.
+Mainly I've added the new package `org.springframework.samples.petclinic.web.api`
+that contains the REST Api that is used by the React frontend. In this package most of the classes are taken 
+from the [angularjs version](https://github.com/spring-projects/spring-petclinic/tree/angularjs) of the demo.
 
-## Understanding the Spring Petclinic application with a few diagrams
+## Related projects
 
-[See the presentation of the Spring Petclinic Framework version](http://fr.slideshare.net/AntoineRey/spring-framework-petclinic-sample-application)
+Note there is another Spring PetClinic example that uses React: [spring-petclinic-graphql](https://github.com/spring-petclinic/spring-petclinic-graphql). Beside React that example uses **GraphQL** for API queries instead of the REST API.
 
-### Petclinic ER Model
+## Contribution
 
-![alt petclinic-ermodel](petclinic-ermodel.png)
+If you like to help and contribute (there's lot root for improvements! I've collected a list of ideas [here: TODO.md](TODO.md)) you're more than welcome! Please open an issue or contact me on [Twitter](https://twitter.com/nilshartmann) so we can discuss together!
 
-## Running petclinic locally
 
-### With maven command line
+## Install and run
+
+Note: Spring Boot Server App must be running before starting the client!
+
+To start the server, launch a Terminal and run from the project's root folder (`spring-petclinic`):
 ```
-git clone https://github.com/spring-petclinic/spring-petclinic-rest.git
-cd spring-petclinic-rest
 ./mvnw spring-boot:run
 ```
 
-### With Docker
+When the server is running you can try to access the API for example to query all known pet types:
 ```
-docker run -p 9966:9966 springcommunity/spring-petclinic-rest
+curl http://localhost:8080/api/pettypes
 ```
 
-You can then access petclinic here: [http://localhost:9966/petclinic/](http://localhost:9966/petclinic/)
+After starting the server you can install and run the client from the `client` folder:
 
-There are actuator health check and info routes as well: 
-* [http://localhost:9966/petclinic/actuator/health](http://localhost:9966/petclinic/actuator/health)
-* [http://localhost:9966/petclinic/actuator/info](http://localhost:9966/petclinic/actuator/info)
+1. `npm install` (installs the node modules and the TypeScript definition files)
+2. `PORT=4444 npm start` 
+3. Open `http://localhost:4444`
 
-## OpenAPI REST API documentation presented here (after application start):
+(Why not use the same server for backend and frontend? Because Webpack does a great job for serving JavaScript-based SPAs and I think it's not too uncommon to run this kind of apps using two dedicated server, one for backend, one for frontend)
 
-You can reach the swagger UI with this URL
-[http://localhost:9966/petclinic/](http://localhost:9966/petclinic/swagger-ui.html).
+## Feedback
 
-You then can get the Open API description reaching this URL [localhost:9966/petclinic/v3/api-docs](localhost:9966/petclinic/v3/api-docs).
+In case you have any comments, questions, bugs, enhancements feel free to open an issue in this repository.
+If you you want to follow me on twitter, my handle is [@nilshartmann](https://twitter.com/nilshartmann).
+ 
+------
+ 
+# From the original sample README file:
 
-## Screenshot of the Angular client
+## Understanding the Spring Petclinic application with a few diagrams
+<a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
 
-<img width="1427" alt="spring-petclinic-angular2" src="https://cloud.githubusercontent.com/assets/838318/23263243/f4509c4a-f9dd-11e6-951b-69d0ef72d8bd.png">
+
+## Running petclinic locally
+```
+	git clone https://github.com/spring-projects/spring-petclinic.git
+	cd spring-petclinic
+	git checkout springboot
+	./mvnw spring-boot:run
+```
+
+You can then access petclinic here: http://localhost:8080/
 
 ## In case you find a bug/suggested improvement for Spring Petclinic
-Our issue tracker is available here: https://github.com/spring-petclinic/spring-petclinic-rest/issues
+Our issue tracker is available here: https://github.com/spring-projects/spring-petclinic/issues
 
 
 ## Database configuration
 
 In its default configuration, Petclinic uses an in-memory database (HSQLDB) which
-gets populated at startup with data.
-A similar setups is provided for MySql and PostgreSQL in case a persistent database configuration is needed.
-To run petclinic locally using persistent database, it is needed to change profile defined in application.properties file.
+gets populated at startup with data. A similar setup is provided for MySql in case a persistent database configuration is needed.
+Note that whenever the database type is changed, the data-access.properties file needs to be updated and the mysql-connector-java artifact from the pom.xml needs to be uncommented.
 
-For MySQL database, it is needed to change param "hsqldb" to "mysql" in string
-```
-spring.profiles.active=hsqldb,spring-data-jpa
-```
- defined in application.properties file.
-
-Before do this, would be good to check properties defined in application-mysql.properties file.
+You may start a MySql database with docker:
 
 ```
-spring.datasource.url = jdbc:mysql://localhost:3306/petclinic?useUnicode=true
-spring.datasource.username=pc
-spring.datasource.password=petclinic 
-spring.datasource.driver-class-name=com.mysql.jdbc.Driver 
-spring.jpa.database=MYSQL
-spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
-spring.jpa.hibernate.ddl-auto=none
-```      
-
-You may also start a MySql database with docker:
-
-```
-docker run --name mysql-petclinic -e MYSQL_ROOT_PASSWORD=petclinic -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:5.7.8
-```
-
-For PostgeSQL database, it is needed to change param "hsqldb" to "postgresql" in string
-```
-spring.profiles.active=hsqldb,spring-data-jpa
-```
- defined in application.properties file.
-
-Before do this, would be good to check properties defined in application-postgresql.properties file.
-
-```
-spring.datasource.url=jdbc:postgresql://localhost:5432/petclinic
-spring.datasource.username=postgres
-spring.datasource.password=petclinic
-spring.datasource.driver-class-name=org.postgresql.Driver
-spring.jpa.database=POSTGRESQL
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
-spring.jpa.hibernate.ddl-auto=none
-```
-You may also start a Postgres database with docker:
-
-```
-docker run --name postgres-petclinic -e POSTGRES_PASSWORD=petclinic -e POSTGRES_DB=petclinic -p 5432:5432 -d postgres:9.6.0
-```
-## API First Approach
-
-This API is built following some [API First approach principles](https://swagger.io/resources/articles/adopting-an-api-first-approach/).
-
-It is specified through the [OpenAPI](https://oai.github.io/Documentation/).
-It is specified in this [file](./src/main/resources/openapi.yml).
-
-Some of the required classes are generated during the build time. 
-Here are the generated file types:
-* DTOs
-* API template interfaces specifying methods to override in the controllers
-
-To see how to get them generated you can read the next chapter. 
-
-## Generated code
-
-Some of the required classes are generated during the build time using maven or any IDE (e.g., IntelliJ Idea or Eclipse).
-
-All of these classes are generated into the ``target/generated-sources`` folder.
-
-Here is a list of the generated packages and the corresponding tooling:
-
-| Package name                                   | Tool             |
-|------------------------------------------------|------------------|
-| org.springframework.samples.petclinic.mapper   | [MapStruct](https://mapstruct.org/)        |
-| org.springframework.samples.petclinic.rest.dto | [OpenAPI Generator maven plugin](https://github.com/OpenAPITools/openapi-generator/) |
-
-
-To get both, you have to run the following command:
-
-```jshelllanguage
-mvn clean install
-```
-
-## Security configuration
-In its default configuration, Petclinic doesn't have authentication and authorization enabled.
-
-### Basic Authentication
-In order to use the basic authentication functionality, turn in on from the application.properties file
-```
-petclinic.security.enable=true
-```
-This will secure all APIs and in order to access them, basic authentication is required.
-Apart from authentication, APIs also require authorization. This is done via roles that a user can have.
-The existing roles are listed below with the corresponding permissions 
-* OWNER_ADMIN -> OwnerController, PetController, PetTypeController (getAllPetTypes and getPetType), VisitController
-* VET_ADMIN   -> PetTypeController, SpecialityController, VetController
-* ADMIN       -> UserController
-
-There is an existing user with the username `admin` and password `admin` that has access to all APIs.
- In order to add a new user, please use the following API:
-```
-POST /api/users
-{
-    "username": "secondAdmin",
-    "password": "password",
-    "enabled": true,
-    "roles": [
-    	{ "name" : "OWNER_ADMIN" }
-	]
-}
+docker run -e MYSQL_ROOT_PASSWORD=petclinic -e MYSQL_DATABASE=petclinic -p 3306:3306 mysql:5.7.8
 ```
 
 ## Working with Petclinic in Eclipse/STS
 
 ### prerequisites
 The following items should be installed in your system:
-* Maven 3 (https://maven.apache.org/install.html)
+* Maven 3 (http://www.sonatype.com/books/mvnref-book/reference/installation.html)
 * git command line tool (https://help.github.com/articles/set-up-git)
 * Eclipse with the m2e plugin (m2e is installed by default when using the STS (http://www.springsource.org/sts) distribution of Eclipse)
 
 Note: when m2e is available, there is an m2 icon in Help -> About dialog.
 If m2e is not there, just follow the install process here: http://eclipse.org/m2e/download/
-* Eclipse with the [mapstruct plugin](https://mapstruct.org/documentation/ide-support/) installed.
+
 
 ### Steps:
 
 1) In the command line
 ```
-git clone https://github.com/spring-petclinic/spring-petclinic-rest.git
+git clone https://github.com/spring-projects/spring-petclinic.git
 ```
 2) Inside Eclipse
 ```
@@ -191,44 +105,108 @@ File -> Import -> Maven -> Existing Maven project
 
 ## Looking for something in particular?
 
-| Layer | Source |
-|--|--|
-| REST API controllers | [REST folder](src/main/java/org/springframework/samples/petclinic/rest) |
-| Service | [ClinicServiceImpl.java](src/main/java/org/springframework/samples/petclinic/service/ClinicServiceImpl.java) |
-| JDBC | [jdbc folder](src/main/java/org/springframework/samples/petclinic/repository/jdbc) |
-| JPA | [jpa folder](src/main/java/org/springframework/samples/petclinic/repository/jpa) |
-| Spring Data JPA | [springdatajpa folder](src/main/java/org/springframework/samples/petclinic/repository/springdatajpa) |
-| Tests | [AbstractClinicServiceTests.java](src/test/java/org/springframework/samples/petclinic/service/clinicService/AbstractClinicServiceTests.java) |
+<table>
+  <tr>
+    <th width="300px">Spring Boot Configuration</th><th width="300px"></th>
+  </tr>
+  <tr>
+    <td>The Main Class</td>
+    <td><a href="/src/main/java/org/springframework/samples/petclinic/PetClinicApplication.java">PetClinicApplication.java</a></td>
+  </tr>
+  <tr>
+    <td>Properties Files</td>
+    <td>
+      <a href="/src/main/resources/application.properties">application.properties</a>
+    </td>
+  </tr>
+  <tr>
+    <td>Caching</td>
+    <td>Use of EhCache <a href="/src/main/java/org/springframework/samples/petclinic/config/CacheConfig.java">CacheConfig.java</a> <a href="/src/main/resources/ehcache.xml">ehcache.xml</a></td>
+  </tr>
+  <tr>
+    <td>Dandelion</td>
+    <td>DatatablesFilter, DandelionFilter and DandelionServlet registration <a href="/src/main/java/org/springframework/samples/petclinic/config/DandelionConfig.java">DandelionConfig.java</a></td>
+  </tr>
+  <tr>
+    <td>Spring MVC - XML integration</td>
+    <td><a href="/src/main/java/org/springframework/samples/petclinic/config/CustomViewsConfiguration.java">CustomViewsConfiguration.java</a></td>
+  </tr>
+</table>
 
 
-## Publishing a Docker image
+<table>
+  <tr>
+    <th width="300px">Others</th><th width="300px">Files</th>
+  </tr>
+ <tr>
+    <td>JSP custom tags</td>
+    <td>
+      <a href="/src/main/webapp/WEB-INF/tags">WEB-INF/tags</a>
+      <a href="/src/main/webapp/WEB-INF/jsp/owners/createOrUpdateOwnerForm.jsp">createOrUpdateOwnerForm.jsp</a></td>
+  </tr>
+  <tr>
+    <td>Bower</td>
+    <td>
+      <a href="/pom.xml">bower-install maven profile declaration inside pom.xml</a> <br />
+      <a href="/bower.json">JavaScript libraries are defined by the manifest file bower.json</a> <br />
+      <a href="/.bowerrc">Bower configuration using JSON</a> <br />
+      <a href="/src/main/resources/spring/mvc-core-config.xml#L30">Resource mapping in Spring configuration</a> <br />
+      <a href="/src/main/webapp/WEB-INF/jsp/fragments/staticFiles.jsp#L12">sample usage in JSP</a></td>
+    </td>
+  </tr>
+  <tr>
+    <td>Dandelion-datatables</td>
+    <td>
+      <a href="/src/main/webapp/WEB-INF/jsp/owners/ownersList.jsp">ownersList.jsp</a>
+      <a href="/src/main/webapp/WEB-INF/jsp/vets/vetList.jsp">vetList.jsp</a>
+      <a href="/src/main/webapp/WEB-INF/web.xml">web.xml</a>
+      <a href="/src/main/resources/dandelion/datatables/datatables.properties">datatables.properties</a>
+   </td>
+  </tr>
+</table>
 
-This application uses [Google Jib]([https://github.com/GoogleContainerTools/jib) to build an optimized Docker image
-into the [Docker Hub](https://cloud.docker.com/u/springcommunity/repository/docker/springcommunity/spring-petclinic-rest/)
-repository.
-The [pom.xml](pom.xml) has been configured to publish the image with a the `springcommunity/spring-petclinic-rest`image name.
 
-Command line to run:
-```
-mvn compile jib:build -X -DjibSerialize=true -Djib.to.auth.username=xxx -Djib.to.auth.password=xxxxx
-```
+## Interaction with other open source projects
 
-## Interesting Spring Petclinic forks
+One of the best parts about working on the Spring Petclinic application is that we have the opportunity to work in direct contact with many Open Source projects. We found some bugs/suggested improvements on various topics such as Spring, Spring Data, Bean Validation and even Eclipse! In many cases, they've been fixed/implemented in just a few days.
+Here is a list of them:
 
-The Spring Petclinic master branch in the main [spring-projects](https://github.com/spring-projects/spring-petclinic)
-GitHub org is the "canonical" implementation, currently based on Spring Boot and Thymeleaf.
+<table>
+  <tr>
+    <th width="300px">Name</th>
+    <th width="300px"> Issue </th>
+  </tr>
 
-This [spring-petclinic-rest](https://github.com/spring-petclinic/spring-petclinic-rest/) project is one of the [several forks](https://spring-petclinic.github.io/docs/forks.html) 
-hosted in a special GitHub org: [spring-petclinic](https://github.com/spring-petclinic).
-If you have a special interest in a different technology stack
-that could be used to implement the Pet Clinic then please join the community there.
+  <tr>
+    <td>Spring JDBC: simplify usage of NamedParameterJdbcTemplate</td>
+    <td> <a href="https://jira.springsource.org/browse/SPR-10256"> SPR-10256</a> and <a href="https://jira.springsource.org/browse/SPR-10257"> SPR-10257</a> </td>
+  </tr>
+  <tr>
+    <td>Bean Validation / Hibernate Validator: simplify Maven dependencies and backward compatibility</td>
+    <td>
+      <a href="https://hibernate.atlassian.net/browse/HV-790"> HV-790</a> and <a href="https://hibernate.atlassian.net/browse/HV-792"> HV-792</a>
+      </td>
+  </tr>
+  <tr>
+    <td>Spring Data: provide more flexibility when working with JPQL queries</td>
+    <td>
+      <a href="https://jira.springsource.org/browse/DATAJPA-292"> DATAJPA-292</a>
+      </td>
+  </tr>  
+  <tr>
+    <td>Eclipse: validation bug when working with .tag/.tagx files (has only been fixed for Eclipse 4.3 (Kepler)). <a href="https://github.com/spring-projects/spring-petclinic/issues/14">See here for more details.</a></td>
+    <td>
+      <a href="https://issuetracker.springsource.com/browse/STS-3294"> STS-3294</a>
+    </td>
+  </tr>    
+</table>
 
 
 # Contributing
 
-The [issue tracker](https://github.com/spring-petclinic/spring-petclinic-rest/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
+The [issue tracker](https://github.com/spring-projects/spring-petclinic/issues) is the preferred channel for bug reports, features requests and submitting pull requests.
 
-For pull requests, editor preferences are available in the [editor config](https://github.com/spring-petclinic/spring-petclinic-rest/blob/master/.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
+For pull requests, editor preferences are available in the [editor config](https://github.com/spring-projects/spring-petclinic/blob/master/.editorconfig) for easy use in common text editors. Read more and download plugins at <http://editorconfig.org>.
 
 
 
